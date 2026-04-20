@@ -1,7 +1,6 @@
 package com.algaworks.algashop.product.catalog.infrastructure.persistence.product;
 
 import com.algaworks.algashop.product.catalog.application.PageModel;
-import com.algaworks.algashop.product.catalog.application.ResourceNotFoundException;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductDetailOutput;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductFilter;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductQueryService;
@@ -12,7 +11,6 @@ import com.algaworks.algashop.product.catalog.domain.model.product.ProductNotFou
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -20,10 +18,10 @@ import org.springframework.data.mongodb.core.aggregation.AggregationExpressionCr
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -77,6 +75,9 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     }
 
     private Sort sortWith(ProductFilter filter) {
+        if (StringUtils.isNotBlank(filter.getTerm())) {
+            return Sort.by("score");
+        }
         return Sort.by(filter.getSortDirectionOrDefault(),
                 filter.getSortByPropertyOrDefault().getPropertyName());
     }
@@ -143,14 +144,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         }
 
         if (StringUtils.isNotBlank(filter.getTerm())) {
-            String regexExpression = String.format(findWordRegex, filter.getTerm());
-            query.addCriteria(
-                    new Criteria().orOperator(
-                            Criteria.where("name").regex(regexExpression),
-                            Criteria.where("brand").regex(regexExpression),
-                            Criteria.where("description").regex(regexExpression)
-                    )
-            );
+            query.addCriteria(TextCriteria.forDefaultLanguage().matching(filter.getTerm()));
         }
 
         return query;
