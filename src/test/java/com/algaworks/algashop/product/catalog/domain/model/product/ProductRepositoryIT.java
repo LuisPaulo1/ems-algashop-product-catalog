@@ -1,7 +1,5 @@
-package com.algaworks.algashop.product.catalog.domain.model;
+package com.algaworks.algashop.product.catalog.domain.model.product;
 
-import com.algaworks.algashop.product.catalog.domain.model.product.ProductNameProjection;
-import com.algaworks.algashop.product.catalog.domain.model.product.ProductRepository;
 import com.algaworks.algashop.product.catalog.infrastructure.persistence.MongoConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

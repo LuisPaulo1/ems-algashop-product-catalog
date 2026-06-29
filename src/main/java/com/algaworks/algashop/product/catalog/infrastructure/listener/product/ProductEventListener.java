@@ -25,13 +25,23 @@ public class ProductEventListener {
     }
 
     @EventListener(ProductDelistedEvent.class)
-    public void handle(ProductDelistedEvent  event) {
+    public void handle(ProductDelistedEvent event) {
         log.info("ProductDelistedEvent  " + event);
     }
 
     @EventListener(ProductListedEvent.class)
     public void handle(ProductListedEvent event) {
         log.info("ProductListedEvent " + event);
+    }
+
+    @EventListener(ProductRestockedEvent.class)
+    public void handle(ProductRestockedEvent event) {
+        log.info("ProductRestockedEvent  " + event);
+    }
+
+    @EventListener(ProductSoldOutEvent.class)
+    public void handle(ProductSoldOutEvent event) {
+        log.info("ProductSoldOutEvent " + event);
     }
 
 }
